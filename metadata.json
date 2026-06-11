@@ -1,0 +1,6 @@
+{
+  "name": "NeoBlocks Mobile",
+  "description": "An offline 8x8 block puzzle game with high scores and user profiles, complete with ready-to-use Eclipse Dynamic Web Project source code (Servlets, JSTL, DAOs).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
