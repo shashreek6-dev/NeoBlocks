@@ -1,6 +1,6 @@
 {
   "name": "NeoBlocks Mobile",
-  "description": "An offline 8x8 block puzzle game with high scores and user profiles, complete with ready-to-use Eclipse Dynamic Web Project source code (Servlets, JSTL, DAOs).",
+  "description": "An offline, progressive 8x8 bioluminescent casual block puzzle game with multi-world level progression and satisfying perfect clears.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

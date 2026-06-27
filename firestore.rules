@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Core Primitives ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Schema Validator ---
+    function isValidUser(data) {
+      return data.keys().hasAll(['username', 'email', 'account_created', 'global_highscore', 'total_matches_played', 'total_wins'])
+        && data.keys().size() == 6
+        && data.username is string
+        && data.username.size() >= 2
+        && data.username.size() <= 32
+        && data.email is string
+        && data.email.size() <= 128
+        && data.account_created is timestamp
+        && data.global_highscore is int
+        && data.global_highscore >= 0
+        && data.total_matches_played is int
+        && data.total_matches_played >= 0
+        && data.total_wins is int
+        && data.total_wins >= 0;
+    }
+
+    // --- User Rules ---
+    match /users/{userId} {
+      allow read: if isSignedIn() && isValidId(userId);
+      
+      allow create: if isOwner(userId)
+                    && isValidId(userId)
+                    && isValidUser(incoming())
+                    && incoming().account_created == request.time
+                    && incoming().global_highscore == 0
+                    && incoming().total_matches_played == 0
+                    && incoming().total_wins == 0;
+
+      allow update: if isOwner(userId)
+                    && isValidId(userId)
+                    && isValidUser(incoming())
+                    && incoming().account_created == existing().account_created
+                    && incoming().email == existing().email
+                    && (
+                      incoming().diff(existing()).affectedKeys().hasOnly(['username', 'global_highscore', 'total_matches_played', 'total_wins'])
+                    );
+
+      allow delete: if false; // Prevent accidental user profile deletion
+    }
+  }
+}

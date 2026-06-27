@@ -205,18 +205,6 @@ export const BLOCK_SHAPES: BlockShape[] = [
     color: "from-neon-green-from to-neon-green-to",
     accentColor: "shadow-neon-green-from/20 border-neon-green-from",
   },
-  // Strategic 3x3 Plus/Cross Shape
-  {
-    id: "plus_3x3",
-    name: "Cross Plus",
-    matrix: [
-      [0, 1, 0],
-      [1, 1, 1],
-      [0, 1, 0],
-    ],
-    color: "from-neon-pink-from to-neon-pink-to",
-    accentColor: "shadow-neon-pink-from/30 border-neon-pink-from",
-  },
   // Strategic Giant Line 5 Vertical
   {
     id: "line_5x1",
@@ -232,18 +220,6 @@ export const BLOCK_SHAPES: BlockShape[] = [
     matrix: [[1, 1, 1, 1, 1]],
     color: "from-neon-purple-from to-neon-purple-to",
     accentColor: "shadow-neon-purple-from/20 border-neon-purple-from",
-  },
-  // Strategic 3x3 U-Shape
-  {
-    id: "u_shape_3x3",
-    name: "U-Shape",
-    matrix: [
-      [1, 0, 1],
-      [1, 0, 1],
-      [1, 1, 1],
-    ],
-    color: "from-neon-cyan-from to-neon-cyan-to",
-    accentColor: "shadow-neon-cyan-from/20 border-neon-cyan-from",
   },
 ];
 

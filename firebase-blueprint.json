@@ -1,0 +1,31 @@
+{
+  "entities": {
+    "user": {
+      "title": "User Profile",
+      "description": "User account information and match stats.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "The custom username of the player." },
+        "email": { "type": "string", "format": "email", "description": "The user's registered email address." },
+        "account_created": { "type": "string", "format": "date-time", "description": "When the account was registered." },
+        "global_highscore": { "type": "integer", "description": "The maximum solo/PvP score of this user." },
+        "total_matches_played": { "type": "integer", "description": "The number of PvP and Solo matches played." },
+        "total_wins": { "type": "integer", "description": "The number of matches won in PvP." }
+      },
+      "required": [
+        "username",
+        "email",
+        "account_created",
+        "global_highscore",
+        "total_matches_played",
+        "total_wins"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "Stores profile details and global game statistics for authenticated players mapping to their Firebase user UID."
+    }
+  }
+}
