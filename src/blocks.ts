@@ -68,10 +68,10 @@ export const BLOCK_SHAPES: BlockShape[] = [
     color: "from-neon-green-from to-neon-green-to",
     accentColor: "shadow-neon-green-from/20 border-neon-green-from",
   },
-  // Corner Small Right
+  // Bottom-Left corner (standard L-corner)
   {
-    id: "corner_2x2_br",
-    name: "L-Corner 3",
+    id: "corner_2x2_bl_standard",
+    name: "Corner Triomino Bottom-Left",
     matrix: [
       [1, 0],
       [1, 1],
@@ -79,10 +79,10 @@ export const BLOCK_SHAPES: BlockShape[] = [
     color: "from-neon-cyan-from to-neon-cyan-to",
     accentColor: "shadow-neon-cyan-from/20 border-neon-cyan-from",
   },
-  // Corner Small Left
+  // Bottom-Right corner (reversed L-corner)
   {
-    id: "corner_2x2_bl",
-    name: "L-Corner 3 Inv",
+    id: "corner_2x2_br_reversed",
+    name: "Corner Triomino Bottom-Right",
     matrix: [
       [0, 1],
       [1, 1],
@@ -90,10 +90,10 @@ export const BLOCK_SHAPES: BlockShape[] = [
     color: "from-neon-cyan-from to-neon-cyan-to",
     accentColor: "shadow-neon-cyan-from/20 border-neon-cyan-from",
   },
-  // Corner Top right
+  // Top-Left corner (like a standard Greek letter Γ)
   {
-    id: "corner_2x2_tr",
-    name: "L-Corner 3 Top R",
+    id: "corner_2x2_tl_gamma",
+    name: "Corner Triomino Top-Left",
     matrix: [
       [1, 1],
       [1, 0],
@@ -101,10 +101,10 @@ export const BLOCK_SHAPES: BlockShape[] = [
     color: "from-neon-cyan-from to-neon-cyan-to",
     accentColor: "shadow-neon-cyan-from/20 border-neon-cyan-from",
   },
-  // Corner Top Left
+  // Top-Right corner (the inverted shape shown in image_8a5cc6.png)
   {
-    id: "corner_2x2_tl",
-    name: "L-Corner 3 Top L",
+    id: "corner_2x2_tr_inverted",
+    name: "Corner Triomino Top-Right",
     matrix: [
       [1, 1],
       [0, 1],
@@ -223,11 +223,38 @@ export const BLOCK_SHAPES: BlockShape[] = [
   },
 ];
 
-export function getRandomBlocks(count: number = 3): BlockShape[] {
+export function getRandomBlocks(count: number = 3, board?: (string | null)[][]): BlockShape[] {
   const selected: BlockShape[] = [];
+  
+  // Count current filled cells (tiles remaining on the board)
+  let filledTilesCount = 0;
+  if (board) {
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        if (board[r] && board[r][c] !== null) {
+          filledTilesCount++;
+        }
+      }
+    }
+  }
+
+  // Helper pieces: 1x1 single tile, 1x2 mini-lines, 2x1 mini-lines
+  const helperShapes = BLOCK_SHAPES.filter(
+    (b) => b.id === "dot_1x1" || b.id === "line_1x2" || b.id === "line_2x1"
+  );
+
   for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * BLOCK_SHAPES.length);
-    const block = BLOCK_SHAPES[randomIndex];
+    let block: BlockShape;
+
+    // "if the grid has fewer than 15 total tiles remaining, aggressively increase the spawn rate of tiny 'helper' pieces"
+    if (board && filledTilesCount > 0 && filledTilesCount < 15 && Math.random() < 0.80) {
+      const randomIndex = Math.floor(Math.random() * helperShapes.length);
+      block = helperShapes[randomIndex];
+    } else {
+      const randomIndex = Math.floor(Math.random() * BLOCK_SHAPES.length);
+      block = BLOCK_SHAPES[randomIndex];
+    }
+
     selected.push({
       ...block,
       id: `${block.id}_${Date.now()}_${i}_${Math.floor(Math.random() * 1000)}`,

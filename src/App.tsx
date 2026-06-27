@@ -170,10 +170,10 @@ export default function App() {
       { matrix: [[1, 1, 1]], name: "H-Line 3" },
       { matrix: [[1], [1], [1]], name: "V-Line 3" },
       { matrix: [[1, 1], [1, 1]], name: "Square 2x2" },
-      { matrix: [[1, 0], [1, 1]], name: "L-Corner 3" },
-      { matrix: [[0, 1], [1, 1]], name: "L-Corner 3 Inv" },
-      { matrix: [[1, 1], [1, 0]], name: "L-Corner 3 Top R" },
-      { matrix: [[1, 1], [0, 1]], name: "L-Corner 3 Top L" },
+      { matrix: [[1, 0], [1, 1]], name: "Corner Triomino Bottom-Left" },
+      { matrix: [[0, 1], [1, 1]], name: "Corner Triomino Bottom-Right" },
+      { matrix: [[1, 1], [1, 0]], name: "Corner Triomino Top-Left" },
+      { matrix: [[1, 1], [0, 1]], name: "Corner Triomino Top-Right" },
     ];
 
     const NEON_COLORS = [
@@ -242,7 +242,7 @@ export default function App() {
     // 3. Set states
     setBoard(newBoard);
     setInitialBlockCount(currentFilledCount);
-    setActiveBlocks(getRandomBlocks(3));
+    setActiveBlocks(getRandomBlocks(3, newBoard));
     setSelectedBlockIndex(null);
     setPreviewHoverCell(null);
     setHeldBlock(null);
@@ -287,7 +287,7 @@ export default function App() {
       setSelectedBlockIndex(null);
 
       if (updated.every((b) => b === null)) {
-        const generated = getRandomBlocks(3);
+        const generated = getRandomBlocks(3, board);
         setActiveBlocks(generated);
       }
     } else {
@@ -457,7 +457,7 @@ export default function App() {
     const allPlaced = updatedActiveBlocks.every((b) => b === null);
     let nextChoices = updatedActiveBlocks;
     if (allPlaced) {
-      const generated = getRandomBlocks(3);
+      const generated = getRandomBlocks(3, newBoard);
       setActiveBlocks(generated);
       nextChoices = generated;
       if (soundOn) playSelectSound();
@@ -550,15 +550,34 @@ export default function App() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#030408]/95 flex items-center justify-center overflow-hidden relative select-none p-0 sm:p-4">
+    <div 
+      className="bg-[#030408]/95 flex items-center justify-center select-none p-0 sm:p-4"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        touchAction: "none"
+      }}
+    >
       {/* Blurred ambient background glowing blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#ea00d9]/10 rounded-full filter blur-[100px] pointer-events-none animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#00f0ff]/10 rounded-full filter blur-[100px] pointer-events-none animate-pulse" />
 
       {/* Main Mobile Shell */}
       <div 
-        className="w-full max-w-[420px] h-screen border-x border-white/10 bg-[#06080e] text-white font-sans flex flex-col justify-between overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.8)] selection:bg-[#00f0ff]/20 crt-container"
-        style={{ height: "100vh", maxHeight: "100vh" }}
+        className="w-full max-w-[420px] border-x border-white/10 bg-[#06080e] text-white font-sans flex flex-col justify-between overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,0.8)] selection:bg-[#00f0ff]/20 crt-container"
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "420px",
+          height: "100%",
+          maxHeight: "100vh",
+          overflow: "hidden",
+          touchAction: "none"
+        }}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#130722] via-[#080914] to-[#040508] pointer-events-none z-0" />
         <div className="grid-floor" />
@@ -771,7 +790,7 @@ export default function App() {
                       const cleanBoard = createEmptyBoard();
                       setBoard(cleanBoard);
                       setInitialBlockCount(0);
-                      setActiveBlocks(getRandomBlocks(3));
+                      setActiveBlocks(getRandomBlocks(3, cleanBoard));
                       setSelectedBlockIndex(null);
                       setPreviewHoverCell(null);
                       setHeldBlock(null);
